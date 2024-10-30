@@ -24,7 +24,7 @@ jobs:
           python-version: '3.11'
 
       - name: Create logs directory
-        run: mkdir -p logs/
+        run: mkdir -p temp_logs/
 
       - name: Lint code
         run: |
@@ -33,12 +33,12 @@ jobs:
       - name: Generate Lint Badge
         run: |
           pip install anybadge
-          test -d badges/ || mkdir -p badges/
+          test -d temp_badges/ || mkdir -p temp_badges/
           if [ "${{ job.status }}" == "success" ]; then
-            PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' logs/lint.log)
-            anybadge -o --label=lint --file=badges/lint.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
+            PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' temp_logs/lint.log)
+            anybadge -o --label=lint --file=temp_badges/lint.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
           else
-            anybadge -o -l lint -v failing -f badges/lint.svg -c red
+            anybadge -o -l lint -v failing -f temp_badges/lint.svg -c red
           fi
       
       - name: List files
@@ -58,8 +58,8 @@ jobs:
           git checkout -B gh-pages  # Create or switch to gh-pages branch
         
           # Copy the badge and log files to the current directory
-          cp badges/lint.svg badges/lint.svg  # This is correct
-          cp logs/lint.log logs/lint.log  # This is correct
+          cp temp_badges/lint.svg badges/lint.svg  # This is correct
+          cp temp_logs/lint.log logs/lint.log  # This is correct
           
           # Add the copied files to the Git index
           git add badges/lint.svg logs/lint.log
