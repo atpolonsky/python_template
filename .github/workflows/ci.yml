@@ -1,0 +1,204 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create logs directory
+        run: mkdir -p logs/
+
+      - name: Lint code
+        run: |
+          pylint --output-format=text src/${{ secrets.PROJECT_NAME }} | tee logs/lint.log || pylint-exit $?
+
+      - name: Generate Lint Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges/
+          if [ "${{ job.status }}" == "success" ]; then
+            PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' logs/lint.log)
+            anybadge -o --label=lint --file=badges/lint.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
+          else
+            anybadge -o -l lint -v failing -f badges/lint.svg -c red
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linting-logs
+          path: |
+            logs/
+            badges/
+
+  test_coverage:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          pip install .[dev]
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+
+      - name: Run tests
+        run: |
+          pytest --cov=src/${{ secrets.PROJECT_NAME }} --cov-report=xml:coverage_reports/coverage.xml --cov-report=html:coverage_reports/htmlcov --cov-report=term --debug=trace tests/
+
+      - name: Generate Coverage Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges
+          if [ "${{ job.status }}" = "success" ]; then
+            LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' coverage_reports/coverage.xml)
+            LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' coverage_reports/coverage.xml)
+            if [ "$LINES_VALID" -ne 0 ]; then
+              COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.1f\", ($LINES_COVERED / $LINES_VALID) * 100}")
+              COLOR=$(awk -v coverage="$COVERAGE_PERCENTAGE" 'BEGIN {
+                  if (coverage < 40) { print "red" }
+                  else if (coverage < 80) { print "orange" }
+                  else if (coverage < 90) { print "yellow" }
+                  else { print "green" }
+              }')
+              anybadge -o -l test-coverage -v "$COVERAGE_PERCENTAGE%" -f badges/test-coverage.svg -c "$COLOR"
+            else
+              echo "Lines Valid is zero, cannot calculate coverage percentage."
+            fi
+          else
+            anybadge -o -l test-coverage -v failing -f badges/test-coverage.svg -c black
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-reports
+          path: |
+            coverage_reports/coverage.xml
+            coverage_reports/htmlcov/
+            badges/
+
+  build_api_docs:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: pip install .[dev]
+
+      - name: Build API docs
+        run: pdoc ./src/${{ secrets.PROJECT_NAME }}  -o ./docs/api
+
+      - name: Generate API Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges
+          if [ "${{ job.status }}" = "success" ]; then
+            anybadge -o -l api -v passing -f badges/api.svg -c green
+          else
+            anybadge -o -l api -v failing -f badges/api.svg -c red
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: api-docs
+          path: |
+            docs/api/
+            badges/
+
+  build_userguide:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install mdbook
+        run: cargo install mdbook
+
+      - name: Build User Guide
+        run: mdbook build ./docs/userguide/
+
+      - name: Generate User Guide Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges
+          if [ "${{ job.status }}" = "success" ]; then
+            anybadge -o -l userguide -v book -f badges/userguide.svg -c blue
+          else
+            anybadge -o -l userguide -v failing -f badges/userguide.svg -c red
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: userguide
+          path: |
+            docs/userguide/book/
+            badges/
+
+  pages:
+    runs-on: ubuntu-latest
+    needs: [test_coverage, build_api_docs, build_userguide]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create public directory
+        run: mkdir -p public/
+
+      - name: Move documentation
+        run: |
+          mv docs/api public/api
+          mv docs/userguide/book public/userguide
+          mv coverage_reports/htmlcov public/htmlcov
+
+      - name: Upload pages
+        uses: actions/upload-artifact@v2
+        with:
+          name: public
+          path: public/
+
+#   package:
+#     runs-on: ubuntu-latest
+#     if: github.event_name == 'pull_request'
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Setup Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: '3.11'
+
+#       - name: Create virtual environment
+#         run: |
+#           python -m venv .venv
+#           source .venv/bin/activate
+#           pip install --upgrade pip setuptools twine wheel
+
+#       - name: Build package
+#         run: |
+#           pip install build
+#           pip install .
+#           python -m build --wheel
+#           VERSION=$(grep '^\s*version\s*=' pyproject.toml | awk -F'=' '{print $2}' | sed 's/[[:space:]"'\'']//g')
+#           echo $VERSION
+#           FILE="dist/${{ secrets.PROJECT_NAME }}-${VERSION}-py3-none-any.whl"
+#           echo $FILE
+#           TWINE_PASSWORD=${{ secrets.GITHUB_TOKEN }} TWINE_USERNAME=__token__ python -m twine upload --verbose --repository-url https://upload.pypi.org/legacy/ $FILE
