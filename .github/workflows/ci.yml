@@ -54,8 +54,8 @@ jobs:
           mkdir -p badges/
         
           # Copy the badge and log files to the current directory
-          cp temp_badges/lint.svg badges/lint.svg  # This is correct
-          cp temp_logs/lint.log logs/lint.log  # This is correct
+          cp temp_badges/lint.svg badges/lint.svg
+          cp temp_logs/lint.log logs/lint.log
           
           # Add the copied files to the Git index
           git add -f badges/lint.svg logs/lint.log
