@@ -1,10 +1,4 @@
 # ebsd3d
-[![api][api_badge]](http://apolon.cee-gitlab.lan/ebsd3d/api) [![userguide][userguide_badge]](http://apolon.cee-gitlab.lan/ebsd3d/userguide) [![test-coverage][test-coverage_badge]](http://apolon.cee-gitlab.lan/ebsd3d/htmlcov) [![lint][lint_badge]](https://cee-gitlab.sandia.gov/apolon/ebsd3d/-/jobs/artifacts/main/raw/logs/lint.log?job=linting)
-
-[api_badge]: https://cee-gitlab.sandia.gov/apolon/ebsd3d/-/jobs/artifacts/main/raw/badges/api.svg?job=pages
-[userguide_badge]: https://cee-gitlab.sandia.gov/apolon/ebsd3d/-/jobs/artifacts/main/raw/badges/userguide.svg?job=pages
-[test-coverage_badge]: https://cee-gitlab.sandia.gov/apolon/ebsd3d/-/jobs/artifacts/main/raw/badges/test-coverage.svg?job=pages
-[lint_badge]: https://cee-gitlab.sandia.gov/apolon/ebsd3d/-/jobs/artifacts/main/raw/badges/lint.svg?job=linting
 
 Tools and pipelines for EBSD data geared for 3D reconstruction
 
