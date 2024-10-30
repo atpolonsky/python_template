@@ -45,7 +45,7 @@ jobs:
         run: ls -R
 
       - name: upload
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: linting-logs
           path: |
