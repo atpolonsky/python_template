@@ -65,7 +65,7 @@ jobs:
           cp temp_logs/lint.log logs/lint.log  # This is correct
           
           # Add the copied files to the Git index
-          git add badges/lint.svg logs/lint.log
+          git add -f badges/lint.svg logs/lint.log
           
           # Commit the changes
           git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
