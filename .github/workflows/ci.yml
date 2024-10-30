@@ -41,8 +41,8 @@ jobs:
             anybadge -o -l lint -v failing -f badges/lint.svg -c red
           fi
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+      - name: upload
+        uses: actions/upload-pages-artifact@v3
         with:
           name: linting-logs
           path: |
