@@ -28,7 +28,7 @@ jobs:
 
       - name: Lint code
         run: |
-          pylint --output-format=text src/${{ secrets.PROJECT_NAME }} | tee logs/lint.log || pylint-exit $?
+          pylint --output-format=text src/${{ secrets.PROJECT_NAME }} | tee temp_logs/lint.log || pylint-exit $?
 
       - name: Generate Lint Badge
         run: |
