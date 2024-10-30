@@ -44,13 +44,6 @@ jobs:
       - name: List files
         run: ls -R
 
-      # - name: upload
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: linting-logs
-      #     path: |
-      #       logs/
-      #       badges/
       - name: Push badges and logs to GitHub Pages
         run: |
           git config --local user.name "github-actions"
