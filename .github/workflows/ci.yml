@@ -56,6 +56,9 @@ jobs:
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
           git checkout -B gh-pages  # Create or switch to gh-pages branch
+
+          mkdir -p logs/
+          mkdir -p badges/
         
           # Copy the badge and log files to the current directory
           cp temp_badges/lint.svg badges/lint.svg  # This is correct
