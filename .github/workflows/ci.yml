@@ -40,6 +40,9 @@ jobs:
           else
             anybadge -o -l lint -v failing -f badges/lint.svg -c red
           fi
+      
+      - name: List files
+        run: ls -R
 
       - name: upload
         uses: actions/upload-pages-artifact@v3
