@@ -44,13 +44,27 @@ jobs:
       - name: List files
         run: ls -R
 
-      - name: upload
-        uses: actions/upload-artifact@v3
-        with:
-          name: linting-logs
-          path: |
-            logs/
-            badges/
+      # - name: upload
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: linting-logs
+      #     path: |
+      #       logs/
+      #       badges/
+      - name: Push badges and logs to GitHub Pages
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git checkout -B gh-pages  # Create or switch to gh-pages branch
+          mkdir -p badges logs
+          cp badges/lint.svg badges/
+          cp logs/lint.log logs/
+          git add badges/lint.svg logs/lint.log
+          git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
+          git push origin gh-pages --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 #   test_coverage:
 #     runs-on: ubuntu-latest
