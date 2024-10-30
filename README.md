@@ -1,6 +1,6 @@
-# ebsd3d
+# python template
 
-Tools and pipelines for EBSD data geared for 3D reconstruction
+python tempalte
 
 ## Getting Started
 
