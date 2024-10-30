@@ -56,11 +56,18 @@ jobs:
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
           git checkout -B gh-pages  # Create or switch to gh-pages branch
-          # mkdir -p badges logs
-          # cp badges/lint.svg badges/
-          # cp logs/lint.log logs/
-          # git add badges/lint.svg logs/lint.log
+        
+          # Copy the badge and log files to the current directory
+          cp badges/lint.svg badges/lint.svg  # This is correct
+          cp logs/lint.log logs/lint.log  # This is correct
+          
+          # Add the copied files to the Git index
+          git add badges/lint.svg logs/lint.log
+          
+          # Commit the changes
           git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
+          
+          # Push to the gh-pages branch
           git push origin gh-pages --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
