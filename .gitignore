@@ -1,0 +1,46 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+
+# Documentation output directories (keep these if you want to build locally)
+docs/api/          # Uncomment if you want to ignore API docs
+docs/userguide/book/ # Uncomment if you want to ignore mdBook output
+docs/userguide/target/ # Uncomment if you want to ignore mdBook output
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test results
+*.coverage
+*.cover
+nosetests.xml
+coverage.xml
+*.hypothesis/
+coverage_reports/          # Uncomment if you want to ignore API docs
+
+# Other files to ignore
+*.sqlite3
+*.db
