@@ -247,6 +247,8 @@ jobs:
           # Add the copied files to the Git index
           git add -f logs/lint.log badges/lint.svg                 # linting
           git add -f badges/test-coverage.svg coverage_reports/    # tests
+          git add -f badges/api.svg docs/api/                      # api
+          git add -f badges/userguide.svg docs/userguide/          # userguide
           
           # Commit the changes
           git commit -m "Update badges and logs from linting and test coverage jobs" || echo "No changes to commit"
