@@ -24,57 +24,68 @@ jobs:
           python-version: '3.11'
 
       - name: Create logs directory
-        run: mkdir -p temp_logs/
+        run: mkdir -p logs/
 
       - name: Lint code
         run: |
           pip install pylint
-          pylint --output-format=text src/${{ secrets.PROJECT_NAME }} | tee temp_logs/lint.log || pylint-exit $?
+          pylint --output-format=text src/${{ secrets.PROJECT_NAME }} | tee logs/lint.log || pylint-exit $?
 
       - name: Generate Lint Badge
         run: |
           pip install anybadge
-          test -d temp_badges/ || mkdir -p temp_badges/
+          test -d badges/ || mkdir -p badges/
           if [ "${{ job.status }}" == "success" ]; then
-            PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' temp_logs/lint.log)
+            PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' logs/lint.log)
             echo "Extracted PYLINT_SCORE: $PYLINT_SCORE"  # Debug line
-            anybadge -o --label=lint --file=temp_badges/lint.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
+            anybadge -o --label=lint --file=badges/lint.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
           else
-            anybadge -o -l lint -v failing -f temp_badges/lint.svg -c gray
+            anybadge -o -l lint -v failing -f badges/lint.svg -c gray
           fi
       
       - name: List files
         run: ls -R
 
-      - name: Push badges and logs to GitHub Pages
-        run: |
-          git config --local user.name "github-actions"
-          git config --local user.email "github-actions@github.com"
-          git checkout -B gh-pages  # Create or switch to gh-pages branch
+      - name: Upload Lint Badge as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: lint-badge
+          path: badges/lint.svg
 
-          mkdir -p logs/
-          mkdir -p badges/
+      - name: Upload Lint Log as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: lint-log
+          path: logs/lint.log
+
+      # - name: Push badges and logs to GitHub Pages
+      #   run: |
+      #     git config --local user.name "github-actions"
+      #     git config --local user.email "github-actions@github.com"
+      #     git checkout -B gh-pages  # Create or switch to gh-pages branch
+
+      #     mkdir -p logs/
+      #     mkdir -p badges/
         
-          # Copy the badge and log files to the current directory
-          cp temp_badges/lint.svg badges/lint.svg
-          cp temp_logs/lint.log logs/lint.log
+      #     # Copy the badge and log files to the current directory
+      #     cp temp_badges/lint.svg badges/lint.svg
+      #     cp temp_logs/lint.log logs/lint.log
           
-          # Add the copied files to the Git index
-          git add -f badges/lint.svg logs/lint.log
+      #     # Add the copied files to the Git index
+      #     git add -f badges/lint.svg logs/lint.log
           
-          # Commit the changes
-          git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
+      #     # Commit the changes
+      #     git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
           
-          # Push to the gh-pages branch
-          git push origin gh-pages --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     # Push to the gh-pages branch
+      #     git push origin gh-pages --force
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
   test_coverage:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
-    needs: linting
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -93,15 +104,15 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest --cov=src/${{ secrets.PROJECT_NAME }} --cov-report=xml:temp_coverage_reports/coverage.xml --cov-report=html:temp_coverage_reports/htmlcov --cov-report=term --debug=trace tests/
+          pytest --cov=src/${{ secrets.PROJECT_NAME }} --cov-report=xml:coverage_reports/coverage.xml --cov-report=html:coverage_reports/htmlcov --cov-report=term --debug=trace tests/
 
       - name: Generate Coverage Badge
         run: |
           pip install anybadge
-          test -d temp_badges/ || mkdir -p temp_badges/
+          test -d badges/ || mkdir -p badges/
           if [ "${{ job.status }}" = "success" ]; then
-            LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' temp_coverage_reports/coverage.xml)
-            LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' temp_coverage_reports/coverage.xml)
+            LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' coverage_reports/coverage.xml)
+            LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' coverage_reports/coverage.xml)
             if [ "$LINES_VALID" -ne 0 ]; then
               COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.1f\", ($LINES_COVERED / $LINES_VALID) * 100}")
               COLOR=$(awk -v coverage="$COVERAGE_PERCENTAGE" 'BEGIN {
@@ -110,37 +121,49 @@ jobs:
                   else if (coverage < 90) { print "yellow" }
                   else { print "green" }
               }')
-              anybadge -o -l test-coverage -v "$COVERAGE_PERCENTAGE%" -f temp_badges/test-coverage.svg -c "$COLOR"
+              anybadge -o -l test-coverage -v "$COVERAGE_PERCENTAGE%" -f badges/test-coverage.svg -c "$COLOR"
             else
               echo "Lines Valid is zero, cannot calculate coverage percentage."
             fi
           else
-            anybadge -o -l test-coverage -v failing -f temp_badges/test-coverage.svg -c gray
+            anybadge -o -l test-coverage -v failing -f badges/test-coverage.svg -c gray
           fi
 
-      - name: Push badges and logs to GitHub Pages
-        run: |
-          ls -R temp_badges/
-          git config --local user.name "github-actions"
-          git config --local user.email "github-actions@github.com"
-          git checkout -B gh-pages  # Create or switch to gh-pages branch
+      - name: Upload Coverage Badge as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-badge
+          path: badges/test-coverage.svg
 
-          mkdir -p badges/
+      - name: Upload Coverage Reports as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-reports
+          path: coverage_reports/
+          
+      # - name: Push badges and logs to GitHub Pages
+      #   run: |
+      #     ls -R temp_badges/
+      #     git config --local user.name "github-actions"
+      #     git config --local user.email "github-actions@github.com"
+      #     git checkout -B gh-pages  # Create or switch to gh-pages branch
+
+      #     mkdir -p badges/
         
-          # Copy the badge and log files to the current directory
-          cp temp_badges/test-coverage.svg badges/test-coverage.svg
-          cp -r temp_coverage_reports/* coverage_reports/
+      #     # Copy the badge and log files to the current directory
+      #     cp temp_badges/test-coverage.svg badges/test-coverage.svg
+      #     cp -r temp_coverage_reports/* coverage_reports/
           
-          # Add the copied files to the Git index
-          git add -f badges/test-coverage.svg coverage_reports/
+      #     # Add the copied files to the Git index
+      #     git add -f badges/test-coverage.svg coverage_reports/
           
-          # Commit the changes
-          git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
+      #     # Commit the changes
+      #     git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
           
-          # Push to the gh-pages branch
-          git push origin gh-pages --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     # Push to the gh-pages branch
+      #     git push origin gh-pages --force
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Upload artifacts
       #   uses: actions/upload-artifact@v2
@@ -150,6 +173,59 @@ jobs:
       #       coverage_reports/coverage.xml
       #       coverage_reports/htmlcov/
       #       badges/
+
+
+pages:
+    runs-on: ubuntu-latest
+    needs: [linting, test_coverage]  # Ensure this job runs after both previous jobs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Lint Badge Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: lint-badge
+
+      - name: Download Lint Log Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: lint-log
+
+      - name: Download Coverage Badge Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-badge
+
+      - name: Download Coverage Reports Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-reports
+
+      - name: Push badges and logs to GitHub Pages
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git checkout -B gh-pages  # Create or switch to gh-pages branch
+
+          mkdir -p logs/
+          mkdir -p badges/
+        
+          # Copy the badge and log files to the current directory
+          cp lint.svg badges/lint.svg  # Assuming lint.svg is the downloaded badge
+          cp test-coverage.svg badges/test-coverage.svg  # Assuming test-coverage.svg is the downloaded badge
+          cp -r coverage_reports/* coverage_reports/  # Copy coverage reports
+          
+          # Add the copied files to the Git index
+          git add -f badges/lint.svg badges/test-coverage.svg coverage_reports/
+          
+          # Commit the changes
+          git commit -m "Update badges and logs from linting and test coverage jobs" || echo "No changes to commit"
+          
+          # Push to the gh-pages branch
+          git push origin gh-pages --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 #   build_api_docs:
 #     runs-on: ubuntu-latest
