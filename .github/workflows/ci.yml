@@ -141,7 +141,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage-reports
-          path: ./artifacts/coverage_reports/
+          path: ./coverage_reports/
 
       - name: Push badges and logs to GitHub Pages
         run: |
