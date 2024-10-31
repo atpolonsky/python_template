@@ -79,7 +79,8 @@ jobs:
       - name: Run tests
         run: |
           pytest --cov=src/${{ secrets.PROJECT_NAME }} --cov-report=xml:coverage_reports/coverage.xml --cov-report=html:coverage_reports/htmlcov --cov-report=term --debug=trace tests/
-
+          ls -R coverage_reports/
+          
       - name: Generate Coverage Badge
         run: |
           pip install anybadge
@@ -156,9 +157,9 @@ jobs:
           cp lint.svg badges/lint.svg  # Assuming lint.svg is the downloaded badge
           cp test-coverage.svg badges/test-coverage.svg  # Assuming test-coverage.svg is the downloaded badge
 
-          ls -R coverage_reports/
+          ls -R coverage-reports/
           # Copy the contents of the downloaded coverage reports to the coverage_reports directory
-          cp -r coverage_reports/* coverage_reports/  # Copy the contents of the artifact to the desired location
+          cp -r coverage-reports coverage_reports/  # Copy the contents of the artifact to the desired location
           
           # Add the copied files to the Git index
           git add -f badges/lint.svg badges/test-coverage.svg coverage_reports/
