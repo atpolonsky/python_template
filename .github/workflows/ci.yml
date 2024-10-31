@@ -116,7 +116,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-reports
-          path: coverage_reports/*
+          path: coverage_reports/
 
   pages:
     runs-on: ubuntu-latest
@@ -162,7 +162,7 @@ jobs:
           cp lint.svg badges/lint.svg  # Assuming lint.svg is the downloaded badge
           cp test-coverage.svg badges/test-coverage.svg  # Assuming test-coverage.svg is the downloaded badge
 
-          ls -R coverage_reports/
+          find $(pwd) -type f
           # # Copy the contents of the downloaded coverage reports to the coverage_reports directory
           # cp -r coverage-reports coverage_reports/  # Copy the contents of the artifact to the desired location
           
