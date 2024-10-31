@@ -128,7 +128,7 @@ jobs:
         
           # Copy the badge and log files to the current directory
           cp temp_badges/test-coverage.svg badges/test-coverage.svg
-          cp -r temp_coverage_reports/ coverage_reports/
+          cp -r temp_coverage_reports/* coverage_reports/
           # cp -r temp_coverage_reports/htmlcov/ coverage_reports/htmlcov/
           # cp temp_coverage_reports/coverage.xml coverage_reports/coverage.xml
           
