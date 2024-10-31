@@ -47,13 +47,13 @@ jobs:
         run: ls -R
 
       - name: Upload Lint Badge as Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: lint-badge
           path: badges/lint.svg
 
       - name: Upload Lint Log as Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: lint-log
           path: logs/lint.log
@@ -130,13 +130,13 @@ jobs:
           fi
 
       - name: Upload Coverage Badge as Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-badge
           path: badges/test-coverage.svg
 
       - name: Upload Coverage Reports as Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-reports
           path: coverage_reports/
