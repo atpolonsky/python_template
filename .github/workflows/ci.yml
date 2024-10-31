@@ -115,9 +115,38 @@ jobs:
           name: coverage-reports
           path: coverage_reports/
 
+  build_api_docs:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install .[dev]
+
+      - name: Build API docs
+        run: pdoc ./src/${{ secrets.PROJECT_NAME }}  -o ./docs/api
+
+      - name: Generate API Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges
+          if [ "${{ job.status }}" = "success" ]; then
+            anybadge -o -l api -v passing -f badges/api.svg -c green
+          else
+            anybadge -o -l api -v failing -f badges/api.svg -c red
+          fi
+
+      - name: Upload API Badge as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-badge
+          path: badges/api.svg
+
   pages:
     runs-on: ubuntu-latest
-    needs: [linting, test_coverage]  # Ensure this job runs after both previous jobs
+    needs: [linting, test_coverage, build_api_docs]  # Ensure this job runs after both previous jobs
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -146,6 +175,12 @@ jobs:
           name: coverage-reports
           path: ./coverage_reports/
 
+      - name: Download API Badge Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api-badge
+          path: ./badges/
+
       - name: Push badges and logs to GitHub Pages
         run: |
           git config --local user.name "github-actions"
@@ -163,37 +198,6 @@ jobs:
           git push origin gh-pages --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-#   build_api_docs:
-#     runs-on: ubuntu-latest
-#     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Install dependencies
-#         run: pip install .[dev]
-
-#       - name: Build API docs
-#         run: pdoc ./src/${{ secrets.PROJECT_NAME }}  -o ./docs/api
-
-#       - name: Generate API Badge
-#         run: |
-#           pip install anybadge
-#           test -d badges/ || mkdir -p badges
-#           if [ "${{ job.status }}" = "success" ]; then
-#             anybadge -o -l api -v passing -f badges/api.svg -c green
-#           else
-#             anybadge -o -l api -v failing -f badges/api.svg -c red
-#           fi
-
-#       - name: Upload artifacts
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: api-docs
-#           path: |
-#             docs/api/
-#             badges/
 
 #   build_userguide:
 #     runs-on: ubuntu-latest
