@@ -7,7 +7,10 @@ on:
   pull_request:
     branches:
       - main
-      
+
+env:
+  PROJECT_NAME: python_template
+
 jobs:
   linting:
     runs-on: ubuntu-latest
@@ -30,7 +33,7 @@ jobs:
       - name: Lint code
         run: |
           pip install pylint
-          pylint --output-format=text src/${{ secrets.PROJECT_NAME }} | tee logs/lint.log || pylint-exit $?
+          pylint --output-format=text src/$PROJECT_NAME/ | tee logs/lint.log || pylint-exit $?
 
       - name: Generate Lint Badge
         run: |
@@ -78,7 +81,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest --cov=src/${{ secrets.PROJECT_NAME }} --cov-report=xml:coverage_reports/coverage.xml --cov-report=html:coverage_reports/htmlcov --cov-report=term --debug=trace tests/
+          pytest --cov=src/$PROJECT_NAME --cov-report=xml:coverage_reports/coverage.xml --cov-report=html:coverage_reports/htmlcov --cov-report=term --debug=trace tests/
           
       - name: Generate Coverage Badge
         run: |
@@ -137,7 +140,9 @@ jobs:
           # echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
 
       - name: Build API docs
-        run: pdoc ./src/python_template/  -o ./docs/api
+        run: |
+          echo "Project Name: $PROJECT_NAME"
+          pdoc ./src/$PROJECT_NAME/  -o ./docs/api
         # run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api/
         # run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api/${{ secrets.PROJECT_NAME}}
 
