@@ -24,3 +24,10 @@ pytest --cov=src --cov-report=xml:coverage_reports/coverage.xml --cov-report=htm
 mdbook serve ./docs/userguide/ --open
 # build the book
 mdbook build ./docs/userguide/
+
+## API docs
+env:
+  PROJECT_NAME: python_template
+echo "Project Name: $PROJECT_NAME"
+pdoc ./src/$PROJECT_NAME/  -o ./docs/api
+pdoc ./src/python_template/  -o ./docs/api

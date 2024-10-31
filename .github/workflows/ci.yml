@@ -177,8 +177,6 @@ jobs:
         run: |
           echo "Project Name: $PROJECT_NAME"
           pdoc ./src/$PROJECT_NAME/  -o ./docs/api
-        # run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api/
-        # run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api/${{ secrets.PROJECT_NAME}}
 
       - name: Generate API Badge
         run: |
@@ -319,55 +317,3 @@ jobs:
           git push origin gh-pages --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-#   pages:
-#     runs-on: ubuntu-latest
-#     needs: [test_coverage, build_api_docs, build_userguide]
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Create public directory
-#         run: mkdir -p public/
-
-#       - name: Move documentation
-#         run: |
-#           mv docs/api public/api
-#           mv docs/userguide/book public/userguide
-#           mv coverage_reports/htmlcov public/htmlcov
-
-#       - name: Upload pages
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: public
-#           path: public/
-
-#   package:
-#     runs-on: ubuntu-latest
-#     if: github.event_name == 'pull_request'
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Setup Python
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: '3.11'
-
-#       - name: Create virtual environment
-#         run: |
-#           python -m venv .venv
-#           source .venv/bin/activate
-#           pip install --upgrade pip setuptools twine wheel
-
-#       - name: Build package
-#         run: |
-#           pip install build
-#           pip install .
-#           python -m build --wheel
-#           VERSION=$(grep '^\s*version\s*=' pyproject.toml | awk -F'=' '{print $2}' | sed 's/[[:space:]"'\'']//g')
-#           echo $VERSION
-#           FILE="dist/${{ secrets.PROJECT_NAME }}-${VERSION}-py3-none-any.whl"
-#           echo $FILE
-#           TWINE_PASSWORD=${{ secrets.GITHUB_TOKEN }} TWINE_USERNAME=__token__ python -m twine upload --verbose --repository-url https://upload.pypi.org/legacy/ $FILE
