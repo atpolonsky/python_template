@@ -122,6 +122,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          toolchain: stable
+          components: rustfmt
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+  
       - name: Install dependencies
         run: pip install .[dev]
 
@@ -143,6 +152,42 @@ jobs:
         with:
           name: api-badge
           path: badges/api.svg
+
+  build_userguide:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install mdbook
+        run: cargo install mdbook
+
+      - name: Build User Guide
+        run: mdbook build ./docs/userguide/
+
+      - name: Generate User Guide Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges
+          if [ "${{ job.status }}" = "success" ]; then
+            anybadge -o -l userguide -v book -f badges/userguide.svg -c blue
+          else
+            anybadge -o -l userguide -v failing -f badges/userguide.svg -c red
+          fi
+
+
+      - name: Upload Userguide Badge as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: userguide-badge
+          path: badges/userguide-coverage.svg
+
+      - name: Upload Book as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: userguide-book
+          path: docs/userguide/book/
 
   pages:
     runs-on: ubuntu-latest
@@ -181,6 +226,18 @@ jobs:
           name: api-badge
           path: ./badges/
 
+      - name: Download Userguide Badge Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: userguide-badge
+          path: ./badges/
+
+      - name: Download Userguide Book Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: userguide-book
+          path: ./docs/userguide/book/    
+
       - name: Push badges and logs to GitHub Pages
         run: |
           git config --local user.name "github-actions"
@@ -199,36 +256,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#   build_userguide:
-#     runs-on: ubuntu-latest
-#     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Install mdbook
-#         run: cargo install mdbook
-
-#       - name: Build User Guide
-#         run: mdbook build ./docs/userguide/
-
-#       - name: Generate User Guide Badge
-#         run: |
-#           pip install anybadge
-#           test -d badges/ || mkdir -p badges
-#           if [ "${{ job.status }}" = "success" ]; then
-#             anybadge -o -l userguide -v book -f badges/userguide.svg -c blue
-#           else
-#             anybadge -o -l userguide -v failing -f badges/userguide.svg -c red
-#           fi
-
-#       - name: Upload artifacts
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: userguide
-#           path: |
-#             docs/userguide/book/
-#             badges/
 
 #   pages:
 #     runs-on: ubuntu-latest
