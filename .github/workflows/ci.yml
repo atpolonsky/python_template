@@ -93,6 +93,7 @@ jobs:
         with:
           default: true
           toolchain: stable
+          components: rustfmt
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -214,7 +215,7 @@ jobs:
           # Copy the badge and log files to the current directory
           cp lint.svg badges/lint.svg  # Assuming lint.svg is the downloaded badge
           cp test-coverage.svg badges/test-coverage.svg  # Assuming test-coverage.svg is the downloaded badge
-          cp -r coverage_reports/* coverage_reports/  # Copy coverage reports
+          cp -r coverage_reports coverage_reports/  # Copy coverage reports
           
           # Add the copied files to the Git index
           git add -f badges/lint.svg badges/test-coverage.svg coverage_reports/
