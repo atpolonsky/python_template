@@ -21,12 +21,9 @@ dev = [
     #"docstr-coverage",
     #"docutils<0.18,>=0.14",
     "flake8",
-    #"jinja2",
-    #"nbsphinx",
     "pdbp",
     "pytest==8.3.3",
     "pytest-cov==5.0.0",
-    #"coverage==7.6.4",
     "pdoc",
 ]
 

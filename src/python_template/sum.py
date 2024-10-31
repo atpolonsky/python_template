@@ -1,7 +1,6 @@
-'''
+"""
 Sum module
-'''
-
+"""
 
 
 def calc_sum(a: int, b: int) -> int:
