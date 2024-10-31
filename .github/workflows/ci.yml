@@ -97,7 +97,7 @@ jobs:
       - name: Generate Coverage Badge
         run: |
           pip install anybadge
-          test -d badges/ || mkdir -p badges
+          test -d temp_badges/ || mkdir -p temp_badges/
           if [ "${{ job.status }}" = "success" ]; then
             LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' temp_coverage_reports/coverage.xml)
             LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' temp_coverage_reports/coverage.xml)
