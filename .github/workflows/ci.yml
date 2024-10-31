@@ -132,11 +132,12 @@ jobs:
           python-version: '3.11'
   
       - name: Install dependencies
-        run: pip install .[dev]
+        run: |
+          pip install .[dev]
+          echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
 
       - name: Build API docs
-        # run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api
-        run: pdoc ./src/python_template/  -o ./docs/api
+        run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api
 
       - name: Generate API Badge
         run: |
