@@ -40,7 +40,7 @@ jobs:
             echo "Extracted PYLINT_SCORE: $PYLINT_SCORE"  # Debug line
             anybadge -o --label=lint --file=temp_badges/lint.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
           else
-            anybadge -o -l lint -v failing -f temp_badges/lint.svg -c red
+            anybadge -o -l lint -v failing -f temp_badges/lint.svg -c gray
           fi
       
       - name: List files
@@ -114,7 +114,7 @@ jobs:
               echo "Lines Valid is zero, cannot calculate coverage percentage."
             fi
           else
-            anybadge -o -l test-coverage -v failing -f temp_badges/test-coverage.svg -c black
+            anybadge -o -l test-coverage -v failing -f temp_badges/test-coverage.svg -c gray
           fi
 
       - name: Push badges and logs to GitHub Pages
@@ -129,8 +129,6 @@ jobs:
           # Copy the badge and log files to the current directory
           cp temp_badges/test-coverage.svg badges/test-coverage.svg
           cp -r temp_coverage_reports/* coverage_reports/
-          # cp -r temp_coverage_reports/htmlcov/ coverage_reports/htmlcov/
-          # cp temp_coverage_reports/coverage.xml coverage_reports/coverage.xml
           
           # Add the copied files to the Git index
           git add -f badges/test-coverage.svg coverage_reports/
