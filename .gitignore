@@ -15,10 +15,10 @@ venv.bak/
 dist/
 build/
 
-# Documentation output directories (keep these if you want to build locally)
-docs/api/          # Uncomment if you want to ignore API docs
-docs/userguide/book/ # Uncomment if you want to ignore mdBook output
-docs/userguide/target/ # Uncomment if you want to ignore mdBook output
+# Documentation output directories (comment these out if you want to push locally-built docs)
+docs/api/         
+docs/userguide/book/ 
+docs/userguide/target/
 
 # IDE and editor files
 .idea/
