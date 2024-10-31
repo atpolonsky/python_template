@@ -120,11 +120,11 @@ jobs:
 
       - name: Push badges and logs to GitHub Pages
         run: |
+          ls -R temp_badges/
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
           git checkout -B gh-pages  # Create or switch to gh-pages branch
 
-          mkdir -p logs/
           mkdir -p badges/
         
           # Copy the badge and log files to the current directory
