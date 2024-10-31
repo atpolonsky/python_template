@@ -215,15 +215,17 @@ jobs:
 
       - name: Generate User Guide Badge
         run: |
-          pip install anybadge
+          # pip install anybadge
           test -d badges/ || mkdir -p badges
           if [ "${{ job.status }}" = "success" ]; then
             # anybadge -o -l userguide -v book -f badges/userguide.svg -c blue
             # anybadge -a userguide -l Book -c blue -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
-            anybadge -a userguide -l Book -v Book -c blue -o mdbook --logo mdbook --logo-color FFFFFF -o badges/userguide.svg
+            # anybadge -a userguide -l Book -v Book -c blue -o mdbook --logo mdbook --logo-color FFFFFF -o badges/userguide.svg
+            curl -L -o badges/userguide.svg "https://img.shields.io/badge/userguide-Book-blue?logo=mdbook&logoColor=000000"
           else
             # anybadge -a userguide -l failing -c red -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
-            anybadge -a userguide -l Status -v Failing -c red -o mdbook --logo mdbook --logo-color FFFFFF -o badges/userguide.svg
+            # anybadge -a userguide -l Status -v Failing -c red -o mdbook --logo mdbook --logo-color FFFFFF -o badges/userguide.svg
+            curl -L -o badges/userguide.svg "https://img.shields.io/badge/userguide-failing-red?logo=mdbook&logoColor=FFFFFF"
           fi
 
 
