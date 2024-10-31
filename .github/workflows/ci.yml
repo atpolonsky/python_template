@@ -219,9 +219,11 @@ jobs:
           test -d badges/ || mkdir -p badges
           if [ "${{ job.status }}" = "success" ]; then
             # anybadge -o -l userguide -v book -f badges/userguide.svg -c blue
-            anybadge -a userguide -l Book -c blue -o mdbook --logo mdbook --logo-color 1111111 -o userguide.svg
+            # anybadge -a userguide -l Book -c blue -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
+            anybadge -o -l userguide -v Book -c blue -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
           else
-            anybadge -a userguide -l failing -c red -o mdbook --logo mdbook --logo-color 1111111 -o userguide.svg
+            # anybadge -a userguide -l failing -c red -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
+            anybadge -o -l userguide -v Book -c red -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
           fi
 
 
