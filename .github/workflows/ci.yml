@@ -220,10 +220,10 @@ jobs:
           if [ "${{ job.status }}" = "success" ]; then
             # anybadge -o -l userguide -v book -f badges/userguide.svg -c blue
             # anybadge -a userguide -l Book -c blue -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
-            anybadge -o -l userguide -v Book -c blue -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
+            anybadge -a userguide -l Book -v Book -c blue -o mdbook --logo mdbook --logo-color FFFFFF -o badges/userguide.svg
           else
             # anybadge -a userguide -l failing -c red -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
-            anybadge -o -l userguide -v Book -c red -o mdbook --logo mdbook --logo-color FFFFFF -o userguide.svg
+            anybadge -a userguide -l Status -v Failing -c red -o mdbook --logo mdbook --logo-color FFFFFF -o badges/userguide.svg
           fi
 
 
