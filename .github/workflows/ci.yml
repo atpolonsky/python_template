@@ -137,7 +137,9 @@ jobs:
           # echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
 
       - name: Build API docs
-        run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api
+        run: pdoc ./src/python_template/  -o ./docs/api
+        # run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api/
+        # run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api/${{ secrets.PROJECT_NAME}}
 
       - name: Generate API Badge
         run: |
