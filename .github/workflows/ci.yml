@@ -181,7 +181,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: userguide-badge
-          path: badges/userguide-coverage.svg
+          path: badges/userguide.svg
 
       - name: Upload Book as Artifact
         uses: actions/upload-artifact@v4
