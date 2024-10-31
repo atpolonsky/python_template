@@ -135,7 +135,8 @@ jobs:
         run: pip install .[dev]
 
       - name: Build API docs
-        run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api
+        # run: pdoc ./src/${{ secrets.PROJECT_NAME }}/  -o ./docs/api
+        run: pdoc ./src/python_template/  -o ./docs/api
 
       - name: Generate API Badge
         run: |
