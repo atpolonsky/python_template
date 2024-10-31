@@ -145,6 +145,9 @@ jobs:
         with:
           name: coverage-reports
 
+      - name: List Coverage Reports After Download
+        run: ls -R coverage_reports/
+
       - name: Push badges and logs to GitHub Pages
         run: |
           git config --local user.name "github-actions"
