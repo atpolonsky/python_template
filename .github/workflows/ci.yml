@@ -218,9 +218,10 @@ jobs:
           pip install anybadge
           test -d badges/ || mkdir -p badges
           if [ "${{ job.status }}" = "success" ]; then
-            anybadge -o -l userguide -v book -f badges/userguide.svg -c blue
+            # anybadge -o -l userguide -v book -f badges/userguide.svg -c blue
+            anybadge -a userguide -l Book -c blue -o mdbook --logo mdbook --logo-color 1111111 -o userguide.svg
           else
-            anybadge -o -l userguide -v failing -f badges/userguide.svg -c red
+            anybadge -a userguide -l failing -c red -o mdbook --logo mdbook --logo-color 1111111 -o userguide.svg
           fi
 
 
