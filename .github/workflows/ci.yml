@@ -109,9 +109,6 @@ jobs:
           name: coverage-badge
           path: badges/test-coverage.svg
 
-      - name: List Coverage Reports Before Upload
-        run: ls -R coverage_reports/
-
       - name: Upload Coverage Reports as Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -144,9 +141,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage-reports
-
-      - name: List Coverage Reports After Download
-        run: ls -R coverage_reports/
+          path: ./artifacts/coverage_reports/
 
       - name: Push badges and logs to GitHub Pages
         run: |
