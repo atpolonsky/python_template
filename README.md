@@ -14,4 +14,9 @@ Go to [home page](https://atpolonsky.github.io/python_template/)
 
 - setup your git keys
 - install python
-- setup proxy stuff
+- setup proxy stuff if needed
+- create virtual environment
+- activate venv
+- upgrade pip setuptools
+- pip install the package
+- check CLI
