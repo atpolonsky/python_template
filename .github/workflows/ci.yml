@@ -217,7 +217,7 @@ jobs:
         run: |
           test -d badges/ || mkdir -p badges
           if [ "${{ job.status }}" = "success" ]; then
-            curl -L -o badges/userguide.svg "https://img.shields.io/badge/userguide-Book-blue?logo=mdbook&logoColor=000000"
+            curl -L -o badges/userguide.svg "https://img.shields.io/badge/userguide-Book-blue?logo=mdbook&logoColor=FFFFFF"
           else
             curl -L -o badges/userguide.svg "https://img.shields.io/badge/userguide-failing-red?logo=mdbook&logoColor=FFFFFF"
           fi
