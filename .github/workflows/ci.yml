@@ -71,53 +71,85 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
-#   test_coverage:
-#     runs-on: ubuntu-latest
-#     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
+  test_coverage:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.event_name == 'push'
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          toolchain: stable
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-#       - name: Install dependencies
-#         run: |
-#           pip install .[dev]
-#           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+      - name: Install dependencies
+        run: |
+          pip install .[dev]
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 
-#       - name: Run tests
-#         run: |
-#           pytest --cov=src/${{ secrets.PROJECT_NAME }} --cov-report=xml:coverage_reports/coverage.xml --cov-report=html:coverage_reports/htmlcov --cov-report=term --debug=trace tests/
+      - name: Run tests
+        run: |
+          pytest --cov=src/${{ secrets.PROJECT_NAME }} --cov-report=xml:temp_coverage_reports/coverage.xml --cov-report=html:temp_coverage_reports/htmlcov --cov-report=term --debug=trace tests/
 
-#       - name: Generate Coverage Badge
-#         run: |
-#           pip install anybadge
-#           test -d badges/ || mkdir -p badges
-#           if [ "${{ job.status }}" = "success" ]; then
-#             LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' coverage_reports/coverage.xml)
-#             LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' coverage_reports/coverage.xml)
-#             if [ "$LINES_VALID" -ne 0 ]; then
-#               COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.1f\", ($LINES_COVERED / $LINES_VALID) * 100}")
-#               COLOR=$(awk -v coverage="$COVERAGE_PERCENTAGE" 'BEGIN {
-#                   if (coverage < 40) { print "red" }
-#                   else if (coverage < 80) { print "orange" }
-#                   else if (coverage < 90) { print "yellow" }
-#                   else { print "green" }
-#               }')
-#               anybadge -o -l test-coverage -v "$COVERAGE_PERCENTAGE%" -f badges/test-coverage.svg -c "$COLOR"
-#             else
-#               echo "Lines Valid is zero, cannot calculate coverage percentage."
-#             fi
-#           else
-#             anybadge -o -l test-coverage -v failing -f badges/test-coverage.svg -c black
-#           fi
+      - name: Generate Coverage Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges
+          if [ "${{ job.status }}" = "success" ]; then
+            LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' temp_coverage_reports/coverage.xml)
+            LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' temp_coverage_reports/coverage.xml)
+            if [ "$LINES_VALID" -ne 0 ]; then
+              COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.1f\", ($LINES_COVERED / $LINES_VALID) * 100}")
+              COLOR=$(awk -v coverage="$COVERAGE_PERCENTAGE" 'BEGIN {
+                  if (coverage < 40) { print "red" }
+                  else if (coverage < 80) { print "orange" }
+                  else if (coverage < 90) { print "yellow" }
+                  else { print "green" }
+              }')
+              anybadge -o -l test-coverage -v "$COVERAGE_PERCENTAGE%" -f temp_badges/test-coverage.svg -c "$COLOR"
+            else
+              echo "Lines Valid is zero, cannot calculate coverage percentage."
+            fi
+          else
+            anybadge -o -l test-coverage -v failing -f temp_badges/test-coverage.svg -c black
+          fi
 
-#       - name: Upload artifacts
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: coverage-reports
-#           path: |
-#             coverage_reports/coverage.xml
-#             coverage_reports/htmlcov/
-#             badges/
+      - name: Push badges and logs to GitHub Pages
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git checkout -B gh-pages  # Create or switch to gh-pages branch
+
+          mkdir -p logs/
+          mkdir -p badges/
+        
+          # Copy the badge and log files to the current directory
+          cp temp_badges/test-coverage.svg badges/test-coverage.svg
+          cp temp_coverage_reports/htmlcov/ coverage_reports/htmlcov/
+          cp temp_coverage_reports/coverage.xml coverage_reports/coverage.xml
+          
+          # Add the copied files to the Git index
+          git add -f badges/test-coverage.svg coverage_reports/*
+          
+          # Commit the changes
+          git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
+          
+          # Push to the gh-pages branch
+          git push origin gh-pages --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: coverage-reports
+      #     path: |
+      #       coverage_reports/coverage.xml
+      #       coverage_reports/htmlcov/
+      #       badges/
 
 #   build_api_docs:
 #     runs-on: ubuntu-latest
