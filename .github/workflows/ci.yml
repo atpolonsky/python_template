@@ -126,16 +126,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: lint-badge
+          path: ./badges/
 
       - name: Download Lint Log Artifact
         uses: actions/download-artifact@v4
         with:
           name: lint-log
+          path: ./logs/
 
       - name: Download Coverage Badge Artifact
         uses: actions/download-artifact@v4
         with:
           name: coverage-badge
+          path: ./badges/
 
       - name: Download Coverage Reports Artifact
         uses: actions/download-artifact@v4
@@ -149,20 +152,21 @@ jobs:
           git config --local user.email "github-actions@github.com"
           git checkout -B gh-pages  # Create or switch to gh-pages branch
 
-          mkdir -p logs/
-          mkdir -p badges/
-          mkdir -p coverage_reports/
+          # mkdir -p logs/
+          # mkdir -p badges/
+          # mkdir -p coverage_reports/
         
           # Copy the badge and log files to the current directory
-          cp lint.svg badges/lint.svg  # Assuming lint.svg is the downloaded badge
-          cp test-coverage.svg badges/test-coverage.svg  # Assuming test-coverage.svg is the downloaded badge
+          # cp lint.svg badges/lint.svg  # Assuming lint.svg is the downloaded badge
+          # cp test-coverage.svg badges/test-coverage.svg  # Assuming test-coverage.svg is the downloaded badge
 
           find $(pwd) -type f
           # # Copy the contents of the downloaded coverage reports to the coverage_reports directory
           # cp -r coverage-reports coverage_reports/  # Copy the contents of the artifact to the desired location
           
           # Add the copied files to the Git index
-          git add -f badges/lint.svg badges/test-coverage.svg coverage_reports/
+          git add -f logs/lint.log badges/lint.svg 
+          git add -f badges/test-coverage.svg coverage_reports/
           
           # Commit the changes
           git commit -m "Update badges and logs from linting and test coverage jobs" || echo "No changes to commit"
