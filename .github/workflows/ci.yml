@@ -128,11 +128,12 @@ jobs:
         
           # Copy the badge and log files to the current directory
           cp temp_badges/test-coverage.svg badges/test-coverage.svg
-          cp temp_coverage_reports/htmlcov/ coverage_reports/htmlcov/
-          cp temp_coverage_reports/coverage.xml coverage_reports/coverage.xml
+          cp -r temp_coverage_reports/ coverage_reports/
+          # cp -r temp_coverage_reports/htmlcov/ coverage_reports/htmlcov/
+          # cp temp_coverage_reports/coverage.xml coverage_reports/coverage.xml
           
           # Add the copied files to the Git index
-          git add -f badges/test-coverage.svg coverage_reports/*
+          git add -f badges/test-coverage.svg coverage_reports/
           
           # Commit the changes
           git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
