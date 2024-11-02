@@ -17,7 +17,7 @@ To use the features of this template, you will need to modify several aspects af
 - Update pyproject.toml to reflect the name of your project  ("python_template" for this repo) and include dependencies. This will also affect paths for command line entry points near the bottom of the .toml file 
 - Modify the name of the subdirectory in src/ to match the name of your project ("python_template" for this repo). The included CI/CD configuration expect the standard src layout employed by the template and will not work otherwise.
 - Modify the imports for test files to point to the name of your project ("python_template" for this repo). Only an example function in the "sum" module is included as a test.
-- Update links for the badges above here in the readme, as well as for the project badges under repo -> General Settings -> Badges. Note that this template is in the 3DMatChar group and the template lives at the following group subdirectory: templates/python_template. Adjust links accordingly. Badges will not render correctly until the above other changes are made and the CI/CD pipeline runs successfully.
+- Update links for the badges above here in the readme. Badges will not render correctly until the above other changes are made and the CI pipeline runs successfully.
 
 ## Installing a pacakge
 
