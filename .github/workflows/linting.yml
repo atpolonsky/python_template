@@ -82,8 +82,7 @@ jobs:
           # Switch to gh-pages branch or create it if it doesn't exist
           git checkout gh-pages 2>/dev/null || git checkout -b gh-pages
           echo "switched"
-          git pull
-
+          
           mkdir -p logs/ 
           mkdir -p badges/
           echo "made directories"
