@@ -1,0 +1,101 @@
+name: Linting
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - dev
+
+env:
+  PROJECT_NAME: python_template
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          toolchain: stable
+          components: rustfmt
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine event type
+        id: event_type
+        run: |
+            if [ "${{ github.event_name }}" == "push" ]; then
+                echo "event_type=push" >> $GITHUB_ENV
+                echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+            elif [ "${{ github.event_name }}" == "pull_request" ]; then
+                echo "event_type=pull_request" >> $GITHUB_ENV
+                echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+            fi
+    
+
+      - name: Create logs directory
+        run: mkdir -p logs/
+
+      - name: Lint code
+        run: |
+          pip install pylint
+          echo "Branch name: $BRANCH_NAME"
+          pylint --output-format=text src/$PROJECT_NAME/ | tee logs/lint-${{ env.BRANCH_NAME }}.log || pylint-exit $?
+
+      - name: Generate Lint Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges/
+          echo "Branch name: $BRANCH_NAME"
+          if [ "${{ job.status }}" == "success" ]; then
+            PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' logs/lint-${{ env.BRANCH_NAME }}.log)
+            echo "Extracted PYLINT_SCORE: $PYLINT_SCORE"  # Debug line
+            anybadge -o --label=lint --file=badges/lint-${{ env.BRANCH_NAME }}.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
+          else
+            anybadge -o -l lint -v failing -f badges/lint-${{ env.BRANCH_NAME }}.svg -c gray
+          fi
+
+      - name: Upload Lint Badge as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: badges/lint-${{ env.BRANCH_NAME }}.svg
+
+      - name: Upload Lint Log as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-log-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: logs/lint-${{ env.BRANCH_NAME }}.log  # Path to the log file for the specific branch
+  
+      - name: Deploy to GitHub Pages
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git checkout -B gh-pages  # Create or switch to gh-pages branch
+
+          mkdir -p logs/ 
+          mkdir -p badges/
+
+          git add -f logs/lint-${{ env.BRANCH_NAME }}.log  # lint log
+          git add -f badges/lint-${{ env.BRANCH_NAME }}.svg
+
+
+          # Commit the changes
+          git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
+          
+          # Push to the gh-pages branch
+          git push origin gh-pages --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
+
