@@ -8,10 +8,6 @@
 | Test Coverage |
 | Linting       | [![lint][lint_main_badge]](https://atpolonsky.github.io/python_template/logs/lint-main.log) | [![lint][lint_dev_badge]](https://atpolonsky.github.io/python_template/logs/lint-dev.log) |
 
-[![lint][lint_dev_badge]]
-[![lint](lint_dev_badge)]
-[![lint](https://atpolonsky.github.io/python_template/badges/lint-dev.svg)]
-
 
 [![userguide][userguide_badge]](https://atpolonsky.github.io/python_template/docs/userguide/book/index.html) [![api][api_badge]](https://atpolonsky.github.io/python_template/docs/api/index.html) [![lint][lint_badge]](https://atpolonsky.github.io/python_template/logs/lint.log) [![test-coverage][test-coverage_badge]](https://atpolonsky.github.io/python_template/coverage_reports/htmlcov/index.html) [![version][version_badge]](https://github.com/atpolonsky/python_template/)
 
