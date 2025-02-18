@@ -101,7 +101,7 @@ jobs:
           git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
           
           # Push to the gh-pages branch
-          git push origin gh-pages
+          git push origin gh-pages --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
