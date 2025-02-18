@@ -1,6 +1,6 @@
 # python template
 
-|               | **Current Release** | **Upcoming Release** |
+|               | **Current Release** |  **In Development**  |
 |-------------  |-------------------  |----------------------|
 | Code          |                     |                      |
 | User Guide    |
