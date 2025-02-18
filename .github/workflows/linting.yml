@@ -79,8 +79,8 @@ jobs:
         run: |
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
-          git checkout -B gh-pages  # Create or switch to gh-pages branch
-          git pull
+          # Switch to gh-pages branch or create it if it doesn't exist
+          git checkout gh-pages 2>/dev/null || git checkout -b gh-pages
 
           mkdir -p logs/ 
           mkdir -p badges/
