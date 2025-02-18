@@ -48,7 +48,7 @@ jobs:
         run: |
           pip install pylint
           echo "Branch name: $BRANCH_NAME"
-          pylint --output-format=text src/$PROJECT_NAME/ | tee logs/lint-$BRANCH_NAME.log || pylint-exit $?
+          pylint --output-format=text src/$PROJECT_NAME/ | tee logs/lint-${{ env.BRANCH_NAME }}.log || pylint-exit $?
 
       - name: Generate Lint Badge
         run: |
@@ -56,24 +56,24 @@ jobs:
           test -d badges/ || mkdir -p badges/
           echo "Branch name: $BRANCH_NAME"
           if [ "${{ job.status }}" == "success" ]; then
-            PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' logs/lint-$BRANCH_NAME.log)
+            PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' logs/lint-${{ env.BRANCH_NAME }}.log)
             echo "Extracted PYLINT_SCORE: $PYLINT_SCORE"  # Debug line
-            anybadge -o --label=lint --file=badges/lint-$BRANCH_NAME.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
+            anybadge -o --label=lint --file=badges/lint-${{ env.BRANCH_NAME }}.svg --value=${PYLINT_SCORE} 2=red 4=orange 8=yellow 10=green
           else
-            anybadge -o -l lint -v failing -f badges/lint-$BRANCH_NAME.svg -c gray
+            anybadge -o -l lint -v failing -f badges/lint-${{ env.BRANCH_NAME }}.svg -c gray
           fi
 
       - name: Upload Lint Badge as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lint-badge-$BRANCH_NAME  # Include branch name in artifact name
-          path: badges/lint-$BRANCH_NAME.svg
+          name: lint-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: badges/lint-${{ env.BRANCH_NAME }}.svg
 
       - name: Upload Lint Log as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lint-log-$BRANCH_NAME  # Include branch name in artifact name
-          path: logs/lint-$BRANCH_NAME.log  # Path to the log file for the specific branch
+          name: lint-log-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: logs/lint-${{ env.BRANCH_NAME }}.log  # Path to the log file for the specific branch
   
       - name: Deploy to GitHub Pages
         run: |
@@ -84,8 +84,8 @@ jobs:
           mkdir -p logs/ 
           mkdir -p badges/
 
-          git add -f logs/lint-$BRANCH_NAME.log  # lint log
-          git add -f badges/lint-$BRANCH_NAME.svg
+          git add -f logs/lint-${{ env.BRANCH_NAME }}.log  # lint log
+          git add -f badges/lint-${{ env.BRANCH_NAME }}.svg
 
 
           # Commit the changes
