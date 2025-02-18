@@ -93,8 +93,8 @@ jobs:
           mkdir -p badges/
           echo "made directories"
 
-          git add logs/lint-${{ env.BRANCH_NAME }}.log  # lint log
-          git add badges/lint-${{ env.BRANCH_NAME }}.svg
+          git add -f logs/lint-${{ env.BRANCH_NAME }}.log  # lint log
+          git add -f badges/lint-${{ env.BRANCH_NAME }}.svg
 
           echo "added files"
           # Commit the changes
