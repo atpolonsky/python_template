@@ -36,6 +36,7 @@ jobs:
         run: |
           pip install pylint
           BRANCH_NAME=${{ github.ref_name }}  # Get the branch name
+          echo $BRANCH_NAME
           pylint --output-format=text src/$PROJECT_NAME/ | tee logs/lint-${BRANCH_NAME}.log || pylint-exit $?
 
       - name: Generate Lint Badge
