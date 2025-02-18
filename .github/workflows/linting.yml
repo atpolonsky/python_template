@@ -10,7 +10,7 @@ on:
       - dev
 
 env:
-  PROJECT_NAME: recon3d
+  PROJECT_NAME: python_template
 
 jobs:
   linting:
