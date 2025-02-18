@@ -85,7 +85,7 @@ jobs:
           # Fetch the latest changes from the remote
           git fetch origin gh-pages
           # Merge the remote changes into the local branch
-          git merge origin/gh-pages || echo "No changes to merge"
+          git merge origin/gh-pages --allow-unrelated-histories || echo "No changes to merge"
 
           mkdir -p logs/ 
           mkdir -p badges/
