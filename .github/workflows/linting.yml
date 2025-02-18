@@ -82,7 +82,11 @@ jobs:
           # Switch to gh-pages branch or create it if it doesn't exist
           git checkout gh-pages 2>/dev/null || git checkout -b gh-pages
           echo "switched"
-          
+          # Fetch the latest changes from the remote
+          git fetch origin gh-pages
+          # Merge the remote changes into the local branch
+          git merge origin/gh-pages || echo "No changes to merge"
+
           mkdir -p logs/ 
           mkdir -p badges/
           echo "made directories"
