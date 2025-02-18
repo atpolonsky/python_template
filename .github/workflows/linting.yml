@@ -34,10 +34,10 @@ jobs:
         run: |
             if [ "${{ github.event_name }}" == "push" ]; then
                 echo "event_type=push" >> $GITHUB_ENV
-                echo "BRANCH_NAME=${{ github.ref_name }} >> $GITHUB_ENV
+                echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
             elif [ "${{ github.event_name }}" == "pull_request" ]; then
                 echo "event_type=pull_request" >> $GITHUB_ENV
-                echo "BRANCH_NAME=${{ github.head_ref }} >> $GITHUB_ENV
+                echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
             fi
     
 
@@ -47,7 +47,7 @@ jobs:
       - name: Lint code
         run: |
           pip install pylint
-          echo "Branch name: $BRANCH_NAME"
+          echo "Branch name: ${BRANCH_NAME}"
           pylint --output-format=text src/$PROJECT_NAME/ | tee logs/lint-${BRANCH_NAME}.log || pylint-exit $?
 
       - name: Generate Lint Badge
