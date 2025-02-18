@@ -27,5 +27,8 @@ jobs:
 
       - name: Setup environemnt
         run: |
-          pip install --upgrade build twine
+          pip install --upgrade build twine==6.0.1
           python3 -m build
+          python3 -m twine upload dist/*
+          # python3 -m twine upload --repository pypi dist/* #for testing
+          # twine upload -u __token__ -p ${{ secrets.PYPI_TOKEN }} dist/* ##from Michael
