@@ -1,0 +1,34 @@
+name: Deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  PROJECT_NAME: python_template
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          toolchain: stable
+          components: rustfmt
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'   
+
+      - name: Setup environemnt
+        run: |
+          pip install --upgrade build twine==6.0.1
+          python3 -m build
+          python3 -m twine upload dist/*
+          # python3 -m twine upload --repository pypi dist/* #for testing
+          # twine upload -u __token__ -p ${{ secrets.PYPI_TOKEN }} dist/* ##from Michael

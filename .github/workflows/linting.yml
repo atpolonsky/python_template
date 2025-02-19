@@ -79,17 +79,37 @@ jobs:
         run: |
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
+
+          git stash -u
+
           git checkout -B gh-pages  # Create or switch to gh-pages branch
+
+          git stash apply
+
+          # Switch to gh-pages branch or create it if it doesn't exist
+          #git fetch origin
+          #git checkout origin/gh-pages 2>/dev/null || git checkout origin/gh-pages
+          #echo "switched"
+          # # Fetch the latest changes from the remote
+          # git fetch origin gh-pages
+          # # Merge the remote changes into the local branch
+          # git merge origin/gh-pages --allow-unrelated-histories || echo "No changes to merge"
+
 
           mkdir -p logs/ 
           mkdir -p badges/
+          echo "made directories"
 
           git add -f logs/lint-${{ env.BRANCH_NAME }}.log  # lint log
           git add -f badges/lint-${{ env.BRANCH_NAME }}.svg
-
-
+          echo "added files"
           # Commit the changes
           git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
+          # Push to the gh-pages branch
+          git push origin gh-pages --force
+          
+          # Commit the changes
+          git commit -m "Update badges and logs from linting and test coverage jobs" || echo "No changes to commit"
           
           # Push to the gh-pages branch
           git push origin gh-pages --force
