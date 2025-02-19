@@ -66,7 +66,7 @@ jobs:
                   else if (coverage < 90) { print "yellow" }
                   else { print "green" }
               }')
-              anybadge -o -l test-coverage -v "$COVERAGE_PERCENTAGE%" -f badges/test-coverage-${{ env.BRANCH_NAME }}.svg -c "$COLOR"
+              anybadge -o -l "Coverage ☂️" -v "$COVERAGE_PERCENTAGE%" -f badges/test-coverage-${{ env.BRANCH_NAME }}.svg -c "$COLOR"
             else
               echo "Lines Valid is zero, cannot calculate coverage percentage."
             fi
