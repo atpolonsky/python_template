@@ -76,19 +76,19 @@ jobs:
           name: lint-log-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
           path: logs/lint-${{ env.BRANCH_NAME }}.log  # Path to the log file for the specific branch
   
-      - name: Deploy to GitHub Pages
+  deploy:
+    runs-on: ubuntu-latest
+    needs: linting
+    steps:
+      - name: Configure git
         run: |
           echo "Branch name: $BRANCH_NAME"
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
 
+      - name: Switch to gh-pages
+        run: |
           git fetch origin
-          git branch -a
-
-          git stash -u
-
-          # git checkout -B gh-pages  # Create or switch to gh-pages branch
-          #git checkout -b gh-pages origin/gh-pages
 
           # Check if the gh-pages branch exists on the remote
           if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
@@ -100,12 +100,30 @@ jobs:
               git push origin gh-pages  # Push the new branch to the remote
           fi
 
-          # # remove files we want to overwrite
-          # rm -f logs/lint-${{ env.BRANCH_NAME }}.log
-          # rm -f badges/lint-${{ env.BRANCH_NAME }}.svg
+          # Remove existing files if they exist
+          if [ -f "logs/lint-dev.log" ]; then
+              echo "Removing existing log file."
+              rm -f logs/lint-dev.log
+          fi
+          if [ -f "badges/lint-dev.svg" ]; then
+              echo "Removing existing badge file."
+              rm -f badges/lint-dev.svg
+          fi
 
-          git stash apply
+      - name: Download Lint Badge Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lint-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: badges/lint-${{ env.BRANCH_NAME }}.svg
+  
+      - name: Download Lint Log Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lint-log-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: logs/lint-${{ env.BRANCH_NAME }}.log  # Path to the log file for the specific branch
 
+      - name: Add files to git
+        run: |
           mkdir -p logs/ 
           mkdir -p badges/
           echo "made directories"
@@ -113,8 +131,14 @@ jobs:
           git add -f logs/lint-${{ env.BRANCH_NAME }}.log  # lint log
           git add -f badges/lint-${{ env.BRANCH_NAME }}.svg
           echo "added files"
+
+      - name: Commit changes
+        run: |
           # Commit the changes
           git commit -m "Update badges and logs from linting job" || echo "No changes to commit"
+
+      - name: Push changes
+        run: |
           # Push to the gh-pages branch
           git push origin gh-pages --force
           
