@@ -100,8 +100,8 @@ jobs:
           fi
 
           # remove files we want to overwrite
-          rm logs/lint-${{ env.BRANCH_NAME }}.log
-          rm badges/lint-${{ env.BRANCH_NAME }}.svg
+          rm -f logs/lint-${{ env.BRANCH_NAME }}.log
+          rm -f badges/lint-${{ env.BRANCH_NAME }}.svg
 
           git stash apply
 
