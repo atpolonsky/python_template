@@ -87,7 +87,21 @@ jobs:
           git stash -u
 
           # git checkout -B gh-pages  # Create or switch to gh-pages branch
-          git checkout -b gh-pages origin/gh-pages
+          #git checkout -b gh-pages origin/gh-pages
+
+          # Check if the gh-pages branch exists on the remote
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+              echo "Switching to existing gh-pages branch."
+              git checkout gh-pages
+          else
+              echo "Creating new gh-pages branch from dev."
+              git checkout -b gh-pages  # Create the gh-pages branch from the current branch
+              git push origin gh-pages  # Push the new branch to the remote
+          fi
+
+          # remove files we want to overwrite
+          rm logs/lint-${{ env.BRANCH_NAME }}.log
+          rm badges/lint-${{ env.BRANCH_NAME }}.svg
 
           git stash apply
 
