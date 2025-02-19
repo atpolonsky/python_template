@@ -1,0 +1,161 @@
+name: Test Coverage
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - dev
+
+env:
+  PROJECT_NAME: python_template
+
+jobs:
+  test_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          toolchain: stable
+          components: rustfmt
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine event type
+        id: event_type
+        run: |
+            if [ "${{ github.event_name }}" == "push" ]; then
+                echo "event_type=push" >> $GITHUB_ENV
+                echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+            elif [ "${{ github.event_name }}" == "pull_request" ]; then
+                echo "event_type=pull_request" >> $GITHUB_ENV
+                echo "BRANCH_NAME=main" >> $GITHUB_ENV
+                #echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+            fi
+
+      - name: Install dependencies
+        run: |
+          pip install .[dev]
+          echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
+
+      - name: Run tests
+        run: |
+          pytest --cov=src/$PROJECT_NAME --cov-report=xml:coverage_reports/${{ env.BRANCH_NAME }}/coverage.xml --cov-report=html:coverage_reports/${{ env.BRANCH_NAME }}/htmlcov --cov-report=term --debug=trace tests/
+
+      - name: Generate Coverage Badge
+        run: |
+          pip install anybadge
+          test -d badges/ || mkdir -p badges/
+          echo "Branch name: $BRANCH_NAME"
+          if [ "${{ job.status }}" = "success" ]; then
+            LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' coverage_reports/${{ env.BRANCH_NAME }}/coverage.xml)
+            LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' coverage_reports/${{ env.BRANCH_NAME }}/coverage.xml)
+            if [ "$LINES_VALID" -ne 0 ]; then
+              COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.1f\", ($LINES_COVERED / $LINES_VALID) * 100}")
+              COLOR=$(awk -v coverage="$COVERAGE_PERCENTAGE" 'BEGIN {
+                  if (coverage < 40) { print "red" }
+                  else if (coverage < 80) { print "orange" }
+                  else if (coverage < 90) { print "yellow" }
+                  else { print "green" }
+              }')
+              anybadge -o -l test-coverage -v "$COVERAGE_PERCENTAGE%" -f badges/test-coverage-${{ env.BRANCH_NAME }}.svg -c "$COLOR"
+            else
+              echo "Lines Valid is zero, cannot calculate coverage percentage."
+            fi
+          else
+            anybadge -o -l test-coverage -v failing -f badges/test-coverage-${{ env.BRANCH_NAME }}.svg -c gray
+          fi
+
+      - name: Upload Coverage Badge as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: badges/test-coverage-${{ env.BRANCH_NAME }}.svg
+
+      - name: Upload Coverage Reports as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: coverage_reports/${{ env.BRANCH_NAME }}/
+
+      - name: Configure git
+        run: |
+            echo "Branch name: $BRANCH_NAME"
+            git config --local user.name "github-actions"
+            git config --local user.email "github-actions@github.com"
+
+      - name: Switch to gh-pages
+        run: |
+            git fetch origin
+
+            git stash -u
+
+            # Check if the gh-pages branch exists on the remote
+            if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+                echo "Switching to existing gh-pages branch."
+                git checkout gh-pages
+            else
+                echo "Creating new gh-pages branch from dev."
+                git checkout -b gh-pages  # Create the gh-pages branch from the current branch
+                git push origin gh-pages  # Push the new branch to the remote
+            fi
+
+            # Remove existing files if they exist
+            if [ -d "coverage_reports/${{ env.BRANCH_NAME }}/" ]; then
+                echo "Removing existing coverage report."
+                rm -rf coverage_reports/${{ env.BRANCH_NAME }}/
+            fi
+            if [ -f "badges/test-coverage-${{ env.BRANCH_NAME }}.svg" ]; then
+                echo "Removing existing badge file."
+                rm -f badges/test-coverage-${{ env.BRANCH_NAME }}.svg
+            fi
+
+            mkdir -p coverage_reports/
+            mkdir -p coverage_reports/${{ env.BRANCH_NAME }}/
+            mkdir -p badges/
+            echo "made directories"
+
+      - name: Download Coverage Badge Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: test-coverage-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: ./badges/
+            # path: badges/lint-${{ env.BRANCH_NAME }}.svg
+
+      - name: Download Coverage Reports Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-reports-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: ./coverage_reports/${{ env.BRANCH_NAME }}/
+
+      - name: Add files to git
+        run: |
+            git add -f coverage_reports/${{ env.BRANCH_NAME }}/  # coverage_report
+            git add -f badges/test-coverage-${{ env.BRANCH_NAME }}.svg
+            echo "added files"
+
+      - name: Commit changes
+        run: |
+            # Commit the changes
+            git commit -m "Update badges and report from test coverage job" || echo "No changes to commit"
+
+      - name: Push changes
+        run: |
+            # Push to the gh-pages branch
+            git push origin gh-pages --force
+            
+            # Commit the changes
+            git commit -m "Update badges and report from test coverage job" || echo "No changes to commit"
+            
+            # Push to the gh-pages branch
+            git push origin gh-pages --force
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

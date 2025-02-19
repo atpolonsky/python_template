@@ -5,7 +5,7 @@
 | Code          |                     |                      |
 | User Guide    |
 | API Docs      |
-| Test Coverage |
+| Test Coverage | [![tests][tests_main_badge]](https://atpolonsky.github.io/python_template/coverage_reports/main/htmlcov/index.html) | [![tests][test_dev_badge]](https://atpolonsky.github.io/python_template/coverage_reports/dev/htmlcov/index.html) |
 | Linting       | [![lint][lint_main_badge]](https://atpolonsky.github.io/python_template/logs/lint-main.log) | [![lint][lint_dev_badge]](https://atpolonsky.github.io/python_template/logs/lint-dev.log) |
 
 
@@ -14,8 +14,13 @@
 Go to [home page](https://github.com/atpolonsky/python_template)
 
 
+[tests_main_badge]: https://atpolonsky.github.io/python_template/badges/test-coverage-main.svg
+[tests_dev_badge]: https://atpolonsky.github.io/python_template/badges/test-coverage-dev.svg
 [lint_main_badge]: https://atpolonsky.github.io/python_template/badges/lint-main.svg
 [lint_dev_badge]: https://atpolonsky.github.io/python_template/badges/lint-dev.svg
+
+
+
 
 [userguide_badge]: https://atpolonsky.github.io/python_template/badges/userguide.svg
 [api_badge]: https://atpolonsky.github.io/python_template/badges/api.svg
