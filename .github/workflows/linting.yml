@@ -80,6 +80,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: linting
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          toolchain: stable
+          components: rustfmt
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
       - name: Configure git
         run: |
           echo "Branch name: $BRANCH_NAME"
