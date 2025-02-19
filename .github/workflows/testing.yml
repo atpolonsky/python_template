@@ -131,8 +131,8 @@ jobs:
 
       - name: Add files to git
         run: |
-            git add -f coverage-reports/${{ env.BRANCH_NAME }}/  # coverage_report
-            git add -f badges/test-coerage-${{ env.BRANCH_NAME }}.svg
+            git add -f coverage_reports/${{ env.BRANCH_NAME }}/  # coverage_report
+            git add -f badges/test-coverage-${{ env.BRANCH_NAME }}.svg
             echo "added files"
 
       - name: Commit changes
