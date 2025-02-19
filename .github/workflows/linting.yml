@@ -81,7 +81,7 @@ jobs:
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
 
-          git status
+          git fetch origin
           git branch -a
 
           git stash -u
