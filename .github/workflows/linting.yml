@@ -12,6 +12,9 @@ on:
 env:
   PROJECT_NAME: python_template
 
+permissions:
+  actions: read
+
 jobs:
   linting:
     runs-on: ubuntu-latest
