@@ -81,9 +81,13 @@ jobs:
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
 
+          git status
+          git branch -a
+
           git stash -u
 
-          git checkout -B gh-pages  # Create or switch to gh-pages branch
+          # git checkout -B gh-pages  # Create or switch to gh-pages branch
+          git checkout -b gh-pages origin/gh-pages
 
           git stash apply
 
