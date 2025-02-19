@@ -56,8 +56,8 @@ jobs:
           test -d badges/ || mkdir -p badges/
           echo "Branch name: $BRANCH_NAME"
           if [ "${{ job.status }}" = "success" ]; then
-            LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' coverage_reports/coverage.xml)
-            LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' coverage_reports/coverage.xml)
+            LINES_COVERED=$(grep -oP 'lines-covered="\K[0-9]+' coverage_reports/${{ env.BRANCH_NAME }}/coverage.xml)
+            LINES_VALID=$(grep -oP 'lines-valid="\K[0-9]+' coverage_reports/${{ env.BRANCH_NAME }}/coverage.xml)
             if [ "$LINES_VALID" -ne 0 ]; then
               COVERAGE_PERCENTAGE=$(awk "BEGIN {printf \"%.1f\", ($LINES_COVERED / $LINES_VALID) * 100}")
               COLOR=$(awk -v coverage="$COVERAGE_PERCENTAGE" 'BEGIN {
