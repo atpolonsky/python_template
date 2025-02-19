@@ -112,7 +112,8 @@ jobs:
                 rm -f badges/test-coverage-${{ env.BRANCH_NAME }}.svg
             fi
 
-            mkdir -p coverage_reports/ 
+            mkdir -p coverage_reports/
+            mkdir -p coverage_reports/${{ env.BRANCH_NAME }}/
             mkdir -p badges/
             echo "made directories"
 
