@@ -5,7 +5,7 @@
 | Code          |                     |                      |
 | User Guide    |
 | API Docs      |
-| Test Coverage | [![tests][tests_main_badge]](https://atpolonsky.github.io/python_template/coverage_reports/main/htmlcov/index.html) | [![tests][test_dev_badge]](https://atpolonsky.github.io/python_template/coverage_reports/dev/htmlcov/index.html) |
+| Test Coverage | [![tests][tests_main_badge]](https://atpolonsky.github.io/python_template/coverage_reports/main/htmlcov/index.html) | [![tests][tests_dev_badge]](https://atpolonsky.github.io/python_template/coverage_reports/dev/htmlcov/index.html) |
 | Linting       | [![lint][lint_main_badge]](https://atpolonsky.github.io/python_template/logs/lint-main.log) | [![lint][lint_dev_badge]](https://atpolonsky.github.io/python_template/logs/lint-dev.log) |
 
 
