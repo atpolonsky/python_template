@@ -37,7 +37,8 @@ jobs:
                 echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
             elif [ "${{ github.event_name }}" == "pull_request" ]; then
                 echo "event_type=pull_request" >> $GITHUB_ENV
-                echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+                echo "BRANCH_NAME=main" >> $GITHUB_ENV
+                #echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
             fi
     
 
