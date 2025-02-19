@@ -12,8 +12,8 @@ on:
 env:
   PROJECT_NAME: python_template
 
-permissions:
-  actions: read
+# permissions:
+#   actions: read
 
 jobs:
   linting:
@@ -120,13 +120,13 @@ jobs:
           fi
 
           # Remove existing files if they exist
-          if [ -f "logs/lint-dev.log" ]; then
+          if [ -f "logs/lint-${{ env.BRANCH_NAME }}.log" ]; then
               echo "Removing existing log file."
-              rm -f logs/lint-dev.log
+              rm -f logs/lint-${{ env.BRANCH_NAME }}.log
           fi
-          if [ -f "badges/lint-dev.svg" ]; then
+          if [ -f "badges/lint-${{ env.BRANCH_NAME }}.svg" ]; then
               echo "Removing existing badge file."
-              rm -f badges/lint-dev.svg
+              rm -f badges/lint-${{ env.BRANCH_NAME }}.svg
           fi
 
           mkdir -p logs/ 
