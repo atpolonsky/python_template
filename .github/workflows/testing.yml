@@ -134,7 +134,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage-reports-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
-          path: ./coverage_reports/${{ env.BRANCH_NAME }}/
+          path: ./coverage_reports/
 
       - name: Add files to git
         run: |
@@ -159,25 +159,3 @@ jobs:
             git push origin gh-pages --force
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
-  
-  
-  
-  
-      
-      
-      
-      - name: Deploy to GitHub Pages
-        run: |
-          git config --local user.name "github-actions"
-          git config --local user.email "github-actions@github.com"
-          git checkout -B gh-pages  # Create or switch to gh-pages branch
-          mkdir -p badges/${{ github.ref_name }}  # Create directory for badges if it doesn't exist
-          mkdir -p coverage_reports/${{ github.ref_name }}  # Create directory for coverage reports if it doesn't exist
-          cp badges/test-coverage-${{ github.ref_name }}.svg badges/${{ github.ref_name }}/  # Copy the badge
-          cp -r coverage_reports/* coverage_reports/${{ github.ref_name }}/  # Copy coverage reports
-          git add badges/${{ github.ref_name }}/* coverage_reports/${{ github.ref_name }}/  # Stage the files for commit
-          git commit -m "Update coverage badge and reports for branch ${{ github.ref_name }}" || echo "No changes to commit"
-          git push origin gh-pages --force  # Push changes to the gh-pages branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
