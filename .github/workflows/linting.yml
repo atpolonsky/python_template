@@ -76,23 +76,23 @@ jobs:
           name: lint-log-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
           path: logs/lint-${{ env.BRANCH_NAME }}.log  # Path to the log file for the specific branch
   
-  deploy:
-    runs-on: ubuntu-latest
-    needs: linting
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: linting
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - uses: actions-rs/toolchain@v1
-        with:
-          default: true
-          toolchain: stable
-          components: rustfmt
+  #     - uses: actions-rs/toolchain@v1
+  #       with:
+  #         default: true
+  #         toolchain: stable
+  #         components: rustfmt
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          
+  #     - uses: actions/setup-python@v5
+  #       with:
+  #         python-version: '3.11'
+
       - name: Configure git
         run: |
           echo "Branch name: $BRANCH_NAME"
