@@ -86,6 +86,12 @@ jobs:
           name: coverage-reports-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
           path: coverage_reports/${{ env.BRANCH_NAME }}/
 
+      - name: Configure git
+        run: |
+            echo "Branch name: $BRANCH_NAME"
+            git config --local user.name "github-actions"
+            git config --local user.email "github-actions@github.com"
+
       - name: Switch to gh-pages
         run: |
             git fetch origin
