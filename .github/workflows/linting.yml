@@ -55,6 +55,7 @@ jobs:
         run: |
           pip install anybadge
           test -d badges/ || mkdir -p badges/
+          test -d logs/ || mkdire -p logs/
           echo "Branch name: $BRANCH_NAME"
           if [ "${{ job.status }}" == "success" ]; then
             PYLINT_SCORE=$(sed -n 's/^Your code has been rated at \([-0-9.]*\)\/.*/\1/p' logs/lint-${{ env.BRANCH_NAME }}.log)
@@ -125,6 +126,10 @@ jobs:
               rm -f badges/lint-dev.svg
           fi
 
+          mkdir -p logs/ 
+          mkdir -p badges/
+          echo "made directories"
+
       - name: Download Lint Badge Artifact
         uses: actions/download-artifact@v4
         with:
@@ -139,10 +144,6 @@ jobs:
 
       - name: Add files to git
         run: |
-          mkdir -p logs/ 
-          mkdir -p badges/
-          echo "made directories"
-
           git add -f logs/lint-${{ env.BRANCH_NAME }}.log  # lint log
           git add -f badges/lint-${{ env.BRANCH_NAME }}.svg
           echo "added files"
