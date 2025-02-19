@@ -157,7 +157,7 @@ jobs:
             
             # Push to the gh-pages branch
             git push origin gh-pages --force
-            env:
+        env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
   
