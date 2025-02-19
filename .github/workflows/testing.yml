@@ -134,7 +134,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: coverage-reports-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
-          path: ./coverage_reports/
+          path: ./coverage_reports/${{ env.BRANCH_NAME }}/
 
       - name: Add files to git
         run: |
