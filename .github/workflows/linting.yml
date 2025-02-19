@@ -83,7 +83,7 @@ jobs:
           # git checkout -B gh-pages  # Create or switch to gh-pages branch
 
           # Switch to gh-pages branch or create it if it doesn't exist
-          git branch
+          git fetch origin
           git checkout origin/gh-pages 2>/dev/null || git checkout origin/gh-pages
           echo "switched"
           # # Fetch the latest changes from the remote
