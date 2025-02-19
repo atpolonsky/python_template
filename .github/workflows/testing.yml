@@ -77,7 +77,7 @@ jobs:
       - name: Upload Coverage Badge as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          name: test-coverage-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
           path: badges/test-coverage-${{ env.BRANCH_NAME }}.svg
 
       - name: Upload Coverage Reports as Artifact
@@ -119,15 +119,15 @@ jobs:
       - name: Download Coverage Badge Artifact
         uses: actions/download-artifact@v4
         with:
-            name: test-coverage-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
-            path: ./badges/
+          name: test-coverage-badge-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: ./badges/
             # path: badges/lint-${{ env.BRANCH_NAME }}.svg
 
       - name: Download Coverage Reports Artifact
         uses: actions/download-artifact@v4
         with:
-            name: coverage-reports-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
-            path: ./coverage_reports/
+          name: coverage-reports-${{ env.BRANCH_NAME }}  # Include branch name in artifact name
+          path: ./coverage_reports/
 
       - name: Add files to git
         run: |
