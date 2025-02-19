@@ -103,6 +103,8 @@ jobs:
         run: |
           git fetch origin
 
+          git stash -u
+
           # Check if the gh-pages branch exists on the remote
           if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
               echo "Switching to existing gh-pages branch."
