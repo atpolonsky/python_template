@@ -80,11 +80,11 @@ jobs:
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
 
-          git checkout -B gh-pages  # Create or switch to gh-pages branch
+          # git checkout -B gh-pages  # Create or switch to gh-pages branch
 
-          # # Switch to gh-pages branch or create it if it doesn't exist
-          # git checkout gh-pages 2>/dev/null || git checkout -b gh-pages
-          # echo "switched"
+          # Switch to gh-pages branch or create it if it doesn't exist
+          git checkout gh-pages 2>/dev/null || git checkout gh-pages
+          echo "switched"
           # # Fetch the latest changes from the remote
           # git fetch origin gh-pages
           # # Merge the remote changes into the local branch
