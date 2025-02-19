@@ -1,0 +1,11 @@
+# release actions
+# build wheel
+# publish to pypi
+# release on github
+# bump version 
+
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'

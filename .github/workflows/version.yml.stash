@@ -1,0 +1,12 @@
+name: version
+
+on: #when do we do this actually
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  PROJECT_NAME: python_template
